@@ -85,12 +85,10 @@ MeteoAula/
 │   └── ServidorSimulado.cs
 └── docs/                         Documentación del proyecto
     ├── logbook/                  Logbook con la especificación del protocolo, las pruebas y la demostración
-    ├── diagramas/                Código PlantUML e imágenes de los diagramas
+    ├── diagramas/                Imágenes de los diagramas
     ├── pruebas/                  Resultados de las pruebas (resultados_pruebas.txt y .csv)
     └── informe/                  Informe ejecutivo y anexo de diagramas
 ```
-
-Nota: en `MeteoAula.Servidor` los archivos de las carpetas llevan el nombre de la carpeta como prefijo (por ejemplo `Transporte_SesionCliente.cs`); el nombre de cada clase es el indicado arriba.
 
 ## Requisitos y dependencias
 
@@ -345,7 +343,7 @@ Resultado de la última ejecución: **30 casos, 30 aprobados, 0 fallidos** (28 a
 | Documento | Ubicación |
 |---|---|
 | Logbook (especificación del protocolo, pruebas con evidencias, demostración y código) | `docs/logbook/` |
-| Diagramas en PlantUML e imágenes (arquitectónico, clases, estados, secuencia exitosa y de errores, casos de uso) | `docs/diagramas/` |
+| Imágenes (arquitectónico, clases, estados, secuencia exitosa y de errores, casos de uso) | `docs/diagramas/` |
 | Resultados de las pruebas | `docs/pruebas/` |
 | Informe ejecutivo y anexo de diagramas | `docs/informe/` |
 
