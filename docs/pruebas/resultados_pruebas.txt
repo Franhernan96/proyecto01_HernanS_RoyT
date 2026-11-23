@@ -1,0 +1,126 @@
+﻿Resultados de las pruebas MeteoAula (MTP/1)
+Fecha: 22/11/2026 21:25:36
+Servidor probado: 127.0.0.1:8080
+
+[CP-01] Identificación correcta -> APROBADO
+    Entrada : Sesión nueva: HELLO|1
+    Esperado: 200|WELCOME|1
+    Obtenido: 200|WELCOME|1
+[CP-02] Listar estaciones -> APROBADO
+    Entrada : LIST
+    Esperado: 210|COUNT|5, 5 filas 211, 219|END
+    Obtenido: 210|COUNT|5 // (5 filas) // 219|END
+[CP-03] Lectura más reciente -> APROBADO
+    Entrada : CURRENT|UIO
+    Esperado: 203|CURRENT|2026-10-01T19:00|17.2|68|NUBLADO
+    Obtenido: 203|CURRENT|2026-10-01T19:00|17.2|68|NUBLADO
+[CP-04] Historial de 2 registros -> APROBADO
+    Entrada : HISTORY|UIO|2
+    Esperado: 210|COUNT|2, filas de las 18:00 y 19:00, 219|END
+    Obtenido: 210|COUNT|2 // 212|2026-10-01T18:00|17.9|66|LLUVIOSO // 212|2026-10-01T19:00|17.2|68|NUBLADO // 219|END
+[CP-05] Resumen de temperatura -> APROBADO
+    Entrada : SUMMARY|UIO
+    Esperado: 204|SUMMARY|19.1|16.8|21.4|12
+    Obtenido: 204|SUMMARY|19.1|16.8|21.4|12
+[CP-06] Ayuda antes de HELLO -> APROBADO
+    Entrada : Sesión nueva: HELP
+    Esperado: 202|HELP|HELLO;HELP;QUIT
+    Obtenido: 202|HELP|HELLO;HELP;QUIT
+[CP-07] Cierre limpio -> APROBADO
+    Entrada : QUIT
+    Esperado: 201|BYE y el servidor cierra el socket
+    Obtenido: 201|BYE // <CONEXION CERRADA>
+[CN-01] Consulta antes de HELLO -> APROBADO
+    Entrada : Sesión nueva: LIST
+    Esperado: 406|INVALID_STATE|...; la sesión sigue abierta
+    Obtenido: 406|INVALID_STATE|Debe identificarse con HELLO antes de usar este comando // luego HELP -> 202|HELP|HELLO;HELP;QUIT
+[CN-02] Comando desconocido -> APROBADO
+    Entrada : FOO
+    Esperado: 400|UNKNOWN_COMMAND|...
+    Obtenido: 400|UNKNOWN_COMMAND|El comando no existe
+[CN-03] Parámetro faltante -> APROBADO
+    Entrada : CURRENT
+    Esperado: 401|MISSING_PARAMS|...
+    Obtenido: 401|MISSING_PARAMS|Faltan parámetros
+[CN-04] N no numérico -> APROBADO
+    Entrada : HISTORY|UIO|abc
+    Esperado: 402|INVALID_FORMAT|...
+    Obtenido: 402|INVALID_FORMAT|N debe ser un número entero
+[CN-05] Estación inexistente -> APROBADO
+    Entrada : CURRENT|XXX
+    Esperado: 404|STATION_NOT_FOUND|...
+    Obtenido: 404|STATION_NOT_FOUND|La estación solicitada no existe
+[CN-06] Versión no soportada -> APROBADO
+    Entrada : Sesión nueva: HELLO|9
+    Esperado: 407|UNSUPPORTED_VERSION|...; sigue en Conectado
+    Obtenido: 407|UNSUPPORTED_VERSION|Versión de protocolo no soportada // luego HELP -> 202|HELP|HELLO;HELP;QUIT
+[CN-07] HELLO repetido -> APROBADO
+    Entrada : HELLO|1
+    Esperado: 406|INVALID_STATE|...
+    Obtenido: 406|INVALID_STATE|El comando no está permitido en el estado actual
+[CN-08] N fuera de rango -> APROBADO
+    Entrada : HISTORY|UIO|99
+    Esperado: 405|OUT_OF_RANGE|...
+    Obtenido: 405|OUT_OF_RANGE|N debe estar entre 1 y 10
+[CN-09] Parámetros de más -> APROBADO
+    Entrada : LIST|x
+    Esperado: 402|INVALID_FORMAT|...
+    Obtenido: 402|INVALID_FORMAT|Sobran parámetros
+[CN-10] Línea vacía -> APROBADO
+    Entrada : Solo LF
+    Esperado: 402|INVALID_FORMAT|...
+    Obtenido: 402|INVALID_FORMAT|La línea está vacía
+[CL-01] N mínimo -> APROBADO
+    Entrada : HISTORY|UIO|1
+    Esperado: 210|COUNT|1, 1 fila, 219|END
+    Obtenido: 210|COUNT|1 // 212|2026-10-01T19:00|17.2|68|NUBLADO // 219|END
+[CL-02] N máximo -> APROBADO
+    Entrada : HISTORY|UIO|10
+    Esperado: 210|COUNT|10, 10 filas, 219|END
+    Obtenido: 210|COUNT|10 // (10 filas) // 219|END
+[CL-03] N bajo el mínimo -> APROBADO
+    Entrada : HISTORY|UIO|0
+    Esperado: 405|OUT_OF_RANGE|...
+    Obtenido: 405|OUT_OF_RANGE|N debe estar entre 1 y 10
+[CL-04] N sobre el máximo -> APROBADO
+    Entrada : HISTORY|UIO|11
+    Esperado: 405|OUT_OF_RANGE|...
+    Obtenido: 405|OUT_OF_RANGE|N debe estar entre 1 y 10
+[CL-05] Mensaje de 256 bytes -> APROBADO
+    Entrada : 255 caracteres + LF
+    Esperado: 400|UNKNOWN_COMMAND|...; la conexión sigue abierta
+    Obtenido: 400|UNKNOWN_COMMAND|El comando no existe // luego HELP -> 202|HELP|LIST;CURRENT;HISTORY;SUMMARY;HELP;QUIT
+[CL-06] Mensaje de 257 bytes -> APROBADO
+    Entrada : 256 caracteres + LF
+    Esperado: 403|MESSAGE_TOO_LONG|... y el servidor cierra la conexión
+    Obtenido: 403|MESSAGE_TOO_LONG|El mensaje supera los 256 bytes permitidos // luego: <CONEXION CERRADA>
+[CR-01] Mensaje fragmentado -> APROBADO
+    Entrada : HEL, esperar 1 s, LO|1\n
+    Esperado: Una sola respuesta 200|WELCOME|1
+    Obtenido: 200|WELCOME|1 (y luego: <SIN RESPUESTA>)
+[CR-02] Varios mensajes en una lectura -> APROBADO
+    Entrada : HELLO|1\nHELP\n en un solo envío
+    Esperado: Dos respuestas en orden: 200 y 202
+    Obtenido: 200|WELCOME|1 // 202|HELP|LIST;CURRENT;HISTORY;SUMMARY;HELP;QUIT
+[CR-03] Terminador CR+LF -> APROBADO
+    Entrada : HELLO|1\r\n
+    Esperado: 200|WELCOME|1
+    Obtenido: 200|WELCOME|1
+[CR-04] Mayúsculas y minúsculas -> APROBADO
+    Entrada : hello|1 y luego current|uio
+    Esperado: 200 y luego 203
+    Obtenido: 200|WELCOME|1 // 203|CURRENT|2026-10-01T19:00|17.2|68|NUBLADO
+[CR-05] Desconexión abrupta del cliente -> APROBADO
+    Entrada : Cierre abrupto (RST) sin QUIT
+    Esperado: El servidor sigue activo y acepta otra conexión
+    Obtenido: Tras el cierre abrupto, la nueva conexión recibió: 200|WELCOME|1 (ver el registro de la desconexión en la consola del servidor)
+[CR-06] Servidor caído durante la sesión -> MANUAL
+    Entrada : Cerrar el servidor con el cliente conectado
+    Esperado: El cliente detecta la pérdida y permite reconectar
+    Obtenido: Se prueba a mano: cerrar el servidor (Ctrl+C) con el cliente conectado y enviar un comando
+[CR-07] Respuesta multi-registro incoherente -> MANUAL
+    Entrada : Servidor simulado: COUNT|3 con solo 2 filas
+    Esperado: El cliente reporta error de protocolo
+    Obtenido: Se prueba a mano: opción 2 de este programa + cliente de consola en el puerto 8081
+
+Aprobados: 28 | Fallidos: 0 | Manuales: 2
